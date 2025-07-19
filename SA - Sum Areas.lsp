@@ -1,0 +1,53 @@
+(defun c:SA( / a i s )
+    (if (setq s
+            (ssget
+               '(   (0 . "CIRCLE,ELLIPSE,*POLYLINE,SPLINE")
+                    (-4 . "<NOT")
+                        (-4 . "<AND")
+                            (0 . "POLYLINE") (-4 . "&") (70 . 80)
+                        (-4 . "AND>")
+                    (-4 . "NOT>")
+                )
+            )
+        )
+        (progn
+            (setq a 0.0)
+            (repeat (setq i (sslength s))
+                (setq a (+ a (vlax-curve-getarea (ssname s (setq i (1- i))))))
+            )
+            (princ "\nTotal Area: ")
+            (princ (rtoc a 4))
+        )
+    )
+    (princ)
+)
+(vl-load-com) (princ)
+
+(defun rtoc ( n p / d i l x )
+    (setq d (getvar 'dimzin))
+    (setvar 'dimzin 0)
+    (setq l (vl-string->list (rtos (abs n) 2 p))
+          x (cond ((cdr (member 46 (reverse l)))) ((reverse l)))
+          i 0
+    )
+    (setvar 'dimzin d)
+    (vl-list->string
+        (append (if (minusp n) '(45))
+            (reverse
+                (apply 'append
+                    (mapcar
+                       '(lambda ( a b )
+                            (if (and (zerop (rem (setq i (1+ i)) 3)) b)
+                                (list a 44)
+                                (list a)
+                            )
+                        )
+                        x (append (cdr x) '(nil))
+                    )
+                )
+            )
+            (member 46 l)
+        )
+    )
+)
+  (prompt "\nSA")

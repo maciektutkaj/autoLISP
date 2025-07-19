@@ -1,0 +1,11 @@
+(defun c:XYZlb (/  p x y ptcoord textloc)
+  (while
+    (setq p (getpoint "\nWskaz punkt: "))
+    (setq textloc (getpoint "\nWskaz lokalizacje tekstu: "))
+    (setq x (rtos (car p)))
+    (setq y (rtos (cadr p)))
+    (setq z (rtos (caddr p)))
+    (setq ptcoord (strcat x "\n " y "\n " z))
+    (command "_LEADER" p textloc "" ptcoord "")
+  )
+)
